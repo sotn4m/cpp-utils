@@ -1,21 +1,28 @@
 # cpp-utils
 
-Small C++23 module library.
+Small C++23 header library.
 
-## Modules
+## Headers
 
-| Module | Description |
+| Header | Description |
 |--------|-------------|
-| `utils.timing` | `utils::measure_time()` — time a callable |
+| `<utils/timing.hpp>` | `utils::measure_time()` — time a callable |
 
 ## Build (standalone)
 
-Requires **CMake 4.3+** and the **Ninja** generator (C++ modules are not supported with Unix Makefiles).
+Requires **CMake 4.3+**.
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build -j
+./build/example
+```
+
+Ninja is optional but recommended for faster builds:
 
 ```bash
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
 cmake --build build -j
-./build/example
 ```
 
 ## Use from another project
@@ -37,19 +44,16 @@ add_executable(my_app src/main.cpp)
 target_link_libraries(my_app PRIVATE cpp_utils)
 ```
 
-Configure the consumer with Ninja:
-
 ```bash
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build -j
 ```
 
-In source, **all `#include` lines must come before any `import`**:
+In source:
 
 ```cpp
 #include <iostream>
-
-import utils.timing;
+#include <utils/timing.hpp>
 
 int main() {
   auto ms = utils::measure_time<std::chrono::milliseconds>([] {
@@ -58,4 +62,4 @@ int main() {
 }
 ```
 
-Linking against `cpp_utils` propagates the module interface — no extra flags needed.
+Linking against `cpp_utils` propagates the include path — no extra flags needed.

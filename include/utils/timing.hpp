@@ -1,13 +1,11 @@
-module;
+#pragma once
 
 #include <chrono>
 #include <concepts>
 #include <functional>
 #include <utility>
 
-export module utils.timing;
-
-export namespace utils {
+namespace utils {
 
 template <typename T>
 concept ChronoDuration =
@@ -28,4 +26,5 @@ template <ChronoDuration Duration = std::chrono::nanoseconds,
 
   return std::chrono::duration_cast<Duration> (end - start);
 }
+
 }  // namespace utils

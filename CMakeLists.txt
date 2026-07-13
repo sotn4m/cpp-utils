@@ -11,13 +11,12 @@ if(NOT DEFINED CPP_UTILS_BUILD_EXAMPLES)
   set(CPP_UTILS_BUILD_EXAMPLES ${PROJECT_IS_TOP_LEVEL})
 endif()
 
-add_library(cpp_utils)
+add_library(cpp_utils INTERFACE)
 
-target_sources(cpp_utils
-  PUBLIC
-    FILE_SET CXX_MODULES
-    FILES
-      src/timing.cpp
+target_include_directories(cpp_utils
+  INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
 )
 
 if(CPP_UTILS_BUILD_EXAMPLES)
