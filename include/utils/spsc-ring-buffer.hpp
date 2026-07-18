@@ -9,6 +9,27 @@ concept ValidSize = N > 2 && std::has_single_bit (N);
 
 namespace utils {
 
+inline constexpr std::size_t cache_line_size {64};
+
+// Lock-free single-producer, single-consumer ring buffer.
+//
+// Threading: exactly one thread may call try_push, size(), and full(); exactly
+// one other thread may call try_pop, size(), and empty(). Any other use pattern
+// is undefined behavior.
+//
+// Capacity is N, a power of two greater than 2. All N slots may hold data; no
+// slot is reserved to distinguish full from empty.
+//
+// try_push returns false when full; try_pop returns nullopt when empty. Neither
+// call blocks.
+//
+// size(), empty(), and full() are snapshots and may be briefly stale while the
+// other thread is active. Prefer calling full() from the producer and empty()
+// from the consumer.
+//
+// T must be default-constructible (backing storage is a fixed std::array). Copy
+// and move overloads of try_push are provided; T must support the operation
+// used.
 template <typename T, std::size_t N>
   requires ValidSize<N>
 class spsc_ring_buffer {
@@ -25,15 +46,13 @@ class spsc_ring_buffer {
 
  private:
   std::array<T, N> buffer_;
-  std::atomic<uint64_t> write_ {0};
-  std::atomic<uint64_t> read_ {0};
+  alignas (cache_line_size) std::atomic<uint64_t> write_ {0};
+  alignas (cache_line_size) std::atomic<uint64_t> read_ {0};
 };
 
 template <typename T, std::size_t N>
   requires ValidSize<N>
 bool spsc_ring_buffer<T, N>::try_push (const T& item) {
-  // can we use the full method?
-  // if (this->full()) return false;
   auto write = write_.load (std::memory_order_relaxed);
   auto read = read_.load (std::memory_order_acquire);
 
@@ -71,7 +90,7 @@ std::optional<T> spsc_ring_buffer<T, N>::try_pop () {
     return std::nullopt;
 
   auto read_index = read & (capacity () - 1);
-  auto elem = buffer_[read_index];
+  T elem = std::move (buffer_[read_index]);
   read_.store (++read, std::memory_order_release);
   return elem;
 }
