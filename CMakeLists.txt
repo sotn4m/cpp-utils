@@ -36,6 +36,7 @@ if(CPP_UTILS_BUILD_TESTS)
     tests/spsc_ring_buffer_test.cpp
     tests/mpsc_ring_buffer_test.cpp
     tests/scoped_temp_dir_test.cpp
+    tests/joining_thread_test.cpp
   )
   target_link_libraries(cpp_utils_tests PRIVATE cpp_utils GTest::gtest_main)
   add_test(NAME cpp_utils_tests COMMAND cpp_utils_tests)

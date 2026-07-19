@@ -7,6 +7,7 @@ Small C++23 header library.
 | Header | Description |
 |--------|-------------|
 | `<utils/timing.hpp>` | `utils::measure_time()` — time a callable |
+| `<utils/joining-thread.hpp>` | `utils::joining_thread` — RAII `std::thread` that joins on destruction |
 | `<utils/spsc-ring-buffer.hpp>` | `utils::spsc_ring_buffer<T, N>` — lock-free SPSC ring buffer |
 
 ## Build (standalone)
