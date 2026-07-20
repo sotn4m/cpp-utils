@@ -1,4 +1,4 @@
-#include <utils/spsc-ring-buffer.hpp>
+#include <utils/spsc_ring_buffer.hpp>
 
 #include <atomic>
 #include <memory>

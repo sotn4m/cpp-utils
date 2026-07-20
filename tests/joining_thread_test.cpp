@@ -1,4 +1,4 @@
-#include <utils/joining-thread.hpp>
+#include <utils/joining_thread.hpp>
 
 #include <atomic>
 #include <chrono>

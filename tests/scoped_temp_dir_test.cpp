@@ -1,4 +1,4 @@
-#include <utils/scoped-temp-dir.hpp>
+#include <utils/scoped_temp_dir.hpp>
 
 #include <atomic>
 #include <fstream>
