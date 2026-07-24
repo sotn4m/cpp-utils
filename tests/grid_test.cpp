@@ -1,5 +1,8 @@
 #include <utils/grid.hpp>
 
+#include <array>
+#include <span>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -140,6 +143,106 @@ TEST (GridTest, ColViewIsMutable) {
                ::testing::ElementsAreArray (std::array {103, 4}));
   EXPECT_THAT (std::ranges::to<std::vector> (grid.get_col (0)),
                ::testing::ElementsAre (101, 103));
+}
+
+TEST (GridTest, FillRowRejectsOutOfBoundsRow) {
+  utils::grid<int> grid (2, 2);
+
+  EXPECT_FALSE (grid.fill_row (2, {1, 2}));
+  EXPECT_THAT (grid.get_row (0), ::testing::Each (::testing::Eq (0)));
+}
+
+TEST (GridTest, FillRowWithSpan) {
+  utils::grid<int> grid (2, 3);
+  const std::array values {1, 2, 3};
+
+  EXPECT_TRUE (grid.fill_row (0, std::span {values}));
+  EXPECT_THAT (grid.get_row (0), ::testing::ElementsAreArray (values));
+}
+
+TEST (GridTest, FillRowWithSpanPartial) {
+  utils::grid<int> grid (2, 3);
+
+  ASSERT_TRUE (grid.fill_row (0, {1, 2, 3}));
+  ASSERT_TRUE (grid.fill_row (1, {4, 5, 6}));
+
+  const std::array values {9};
+  ASSERT_TRUE (grid.fill_row (0, std::span {values}));
+  EXPECT_THAT (grid.get_row (0),
+               ::testing::ElementsAreArray (std::array {9, 2, 3}));
+}
+
+TEST (GridTest, FillRowWithSpanRejectsTooManyValues) {
+  utils::grid<int> grid (2, 2);
+  const std::array values {1, 2, 3};
+
+  EXPECT_FALSE (grid.fill_row (0, std::span {values}));
+  EXPECT_THAT (grid.get_row (0), ::testing::Each (::testing::Eq (0)));
+}
+
+TEST (GridTest, FillRowWithSpanRejectsOutOfBoundsRow) {
+  utils::grid<int> grid (2, 2);
+  const std::array values {1, 2};
+
+  EXPECT_FALSE (grid.fill_row (2, std::span {values}));
+}
+
+TEST (GridTest, FillRowWithSingleValue) {
+  utils::grid<int> grid (2, 3);
+
+  EXPECT_TRUE (grid.fill_row (0, 7));
+  EXPECT_THAT (grid.get_row (0), ::testing::Each (::testing::Eq (7)));
+}
+
+TEST (GridTest, FillRowWithSingleValueRejectsOutOfBoundsRow) {
+  utils::grid<int> grid (2, 3);
+
+  EXPECT_FALSE (grid.fill_row (2, 7));
+}
+
+TEST (GridTest, ConstGetRowAndGetCol) {
+  utils::grid<int> grid (2, 3);
+  grid.fill_row (0, {1, 2, 3});
+  grid.fill_row (1, {4, 5, 6});
+
+  const auto& cgrid = grid;
+  EXPECT_THAT (cgrid.get_row (0),
+               ::testing::ElementsAreArray (std::array {1, 2, 3}));
+  EXPECT_THAT (cgrid.get_row (1),
+               ::testing::ElementsAreArray (std::array {4, 5, 6}));
+  EXPECT_THAT (std::ranges::to<std::vector> (cgrid.get_col (0)),
+               ::testing::ElementsAre (1, 4));
+  EXPECT_THAT (std::ranges::to<std::vector> (cgrid.get_col (2)),
+               ::testing::ElementsAre (3, 6));
+}
+
+TEST (GridTest, OperatorCallMutable) {
+  utils::grid<int> grid (2, 2);
+
+  grid (0, 0) = 1;
+  grid (0, 1) = 2;
+  grid (1, 0) = 3;
+  grid (1, 1) = 4;
+
+  EXPECT_EQ (grid (0, 0), 1);
+  EXPECT_EQ (grid (0, 1), 2);
+  EXPECT_EQ (grid (1, 0), 3);
+  EXPECT_EQ (grid (1, 1), 4);
+
+  grid (0, 1) = 99;
+  EXPECT_EQ (grid (0, 1), 99);
+}
+
+TEST (GridTest, OperatorCallConst) {
+  utils::grid<int> grid (2, 2);
+  grid.fill_row (0, {1, 2});
+  grid.fill_row (1, {3, 4});
+
+  const auto& cgrid = grid;
+  EXPECT_EQ (cgrid (0, 0), 1);
+  EXPECT_EQ (cgrid (0, 1), 2);
+  EXPECT_EQ (cgrid (1, 0), 3);
+  EXPECT_EQ (cgrid (1, 1), 4);
 }
 
 }  // namespace
