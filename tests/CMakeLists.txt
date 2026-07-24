@@ -15,6 +15,7 @@ add_executable(cpp_utils_tests
   scoped_temp_dir_test.cpp
   joining_thread_test.cpp
   threadsafe_lookup_table_test.cpp
+  grid_test.cpp
 )
 
 target_compile_features(cpp_utils_tests PRIVATE cxx_std_23)
