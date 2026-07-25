@@ -16,6 +16,8 @@ add_executable(cpp_utils_tests
   joining_thread_test.cpp
   threadsafe_lookup_table_test.cpp
   grid_test.cpp
+  rolling_time_window_test.cpp
+  percent_change_test.cpp
 )
 
 target_compile_features(cpp_utils_tests PRIVATE cxx_std_23)
