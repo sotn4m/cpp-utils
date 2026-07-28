@@ -9,6 +9,7 @@ Small C++23 header library.
 | `<utils/timing.hpp>` | `utils::measure_time()` — time a callable |
 | `<utils/joining-thread.hpp>` | `utils::joining_thread` — RAII `std::thread` that joins on destruction |
 | `<utils/spsc-ring-buffer.hpp>` | `utils::spsc_ring_buffer<T, N>` — lock-free SPSC ring buffer |
+| `<utils/cooldown_tracker.hpp>` | `utils::cooldown_tracker<Key, Clock>` — fixed cooldown gate for alert/order dedup |
 | `<utils/rolling_time_window.hpp>` | `utils::rolling_time_window<T, Clock>` — fixed-duration time series buffer |
 | `<utils/percent_change.hpp>` | `utils::percent_change()` — relative percent change between two values |
 

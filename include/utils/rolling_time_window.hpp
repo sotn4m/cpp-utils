@@ -26,8 +26,8 @@ template <typename T, typename Clock = std::chrono::steady_clock>
 class rolling_time_window {
  public:
   using clock = Clock;
-  using time_point = typename Clock::time_point;
-  using duration = typename Clock::duration;
+  using time_point = typename clock::time_point;
+  using duration = typename clock::duration;
   using sample = std::pair<time_point, T>;
 
   explicit rolling_time_window (duration window) : window_ {window} {
@@ -36,19 +36,25 @@ class rolling_time_window {
     }
   }
 
-  void push (time_point t, const T& value) { push_impl (t, value); }
+  auto push (time_point t, const T& value) -> void { push_impl (t, value); }
 
-  void push (time_point t, T&& value) { push_impl (t, std::move (value)); }
+  auto push (time_point t, T&& value) -> void {
+    push_impl (t, std::move (value));
+  }
 
-  void clear () noexcept { samples_.clear (); }
+  auto clear () noexcept -> void { samples_.clear (); }
 
-  [[nodiscard]] duration window () const noexcept { return window_; }
+  [[nodiscard]] auto window () const noexcept -> duration { return window_; }
 
-  [[nodiscard]] bool empty () const noexcept { return samples_.empty (); }
+  [[nodiscard]] auto empty () const noexcept -> bool {
+    return samples_.empty ();
+  }
 
-  [[nodiscard]] std::size_t size () const noexcept { return samples_.size (); }
+  [[nodiscard]] auto size () const noexcept -> std::size_t {
+    return samples_.size ();
+  }
 
-  [[nodiscard]] std::optional<T> latest_value () const
+  [[nodiscard]] auto latest_value () const -> std::optional<T>
     requires std::copy_constructible<T>
   {
     if (samples_.empty ()) {
@@ -57,7 +63,7 @@ class rolling_time_window {
     return samples_.back ().second;
   }
 
-  [[nodiscard]] std::optional<T> oldest_value () const
+  [[nodiscard]] auto oldest_value () const -> std::optional<T>
     requires std::copy_constructible<T>
   {
     if (samples_.empty ()) {
@@ -66,14 +72,14 @@ class rolling_time_window {
     return samples_.front ().second;
   }
 
-  [[nodiscard]] std::optional<time_point> latest_time () const {
+  [[nodiscard]] auto latest_time () const -> std::optional<time_point> {
     if (samples_.empty ()) {
       return std::nullopt;
     }
     return samples_.back ().first;
   }
 
-  [[nodiscard]] std::optional<time_point> oldest_time () const {
+  [[nodiscard]] auto oldest_time () const -> std::optional<time_point> {
     if (samples_.empty ()) {
       return std::nullopt;
     }
@@ -81,14 +87,14 @@ class rolling_time_window {
   }
 
   // True when the buffer spans at least window() from oldest to latest sample.
-  [[nodiscard]] bool ready () const noexcept {
+  [[nodiscard]] auto ready () const noexcept -> bool {
     if (samples_.empty ()) {
       return false;
     }
     return (samples_.back ().first - samples_.front ().first) >= window_;
   }
 
-  [[nodiscard]] duration span () const {
+  [[nodiscard]] auto span () const -> duration {
     if (samples_.empty ()) {
       return duration::zero ();
     }
@@ -97,12 +103,12 @@ class rolling_time_window {
 
  private:
   template <typename U>
-  void push_impl (time_point t, U&& value) {
+  auto push_impl (time_point t, U&& value) -> void {
     samples_.emplace_back (t, std::forward<U> (value));
     prune_older_than (t - window_);
   }
 
-  void prune_older_than (time_point cutoff) {
+  auto prune_older_than (time_point cutoff) -> void {
     while (!samples_.empty () && samples_.front ().first < cutoff) {
       samples_.pop_front ();
     }

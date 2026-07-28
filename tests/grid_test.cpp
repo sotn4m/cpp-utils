@@ -32,9 +32,9 @@ TEST (GridTest, AtReturnsValueInBounds) {
 TEST (GridTest, AtReturnsNulloptWhenOutOfBounds) {
   utils::grid<int> grid (2, 3);
 
-  EXPECT_EQ (grid.at (2, 0), std::nullopt);
-  EXPECT_EQ (grid.at (0, 3), std::nullopt);
-  EXPECT_EQ (grid.at (2, 3), std::nullopt);
+  EXPECT_THAT (grid.at (2, 0), Eq (std::nullopt));
+  EXPECT_THAT (grid.at (0, 3), Eq (std::nullopt));
+  EXPECT_THAT (grid.at (2, 3), Eq (std::nullopt));
 }
 
 TEST (GridTest, GridSuccess) {

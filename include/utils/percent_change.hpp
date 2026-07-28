@@ -11,8 +11,8 @@ namespace utils {
 //
 // Returns nullopt when baseline is zero or either argument is non-finite.
 template <std::floating_point T>
-[[nodiscard]] constexpr std::optional<T> percent_change (T baseline,
-                                                         T current) noexcept {
+[[nodiscard]] constexpr auto percent_change (T baseline, T current) noexcept
+    -> std::optional<T> {
   if (!std::isfinite (baseline) || !std::isfinite (current)) {
     return std::nullopt;
   }

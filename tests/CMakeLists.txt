@@ -18,6 +18,7 @@ add_executable(cpp_utils_tests
   grid_test.cpp
   rolling_time_window_test.cpp
   percent_change_test.cpp
+  cooldown_tracker_test.cpp
 )
 
 target_compile_features(cpp_utils_tests PRIVATE cxx_std_23)

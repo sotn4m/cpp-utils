@@ -6,6 +6,10 @@
 
 #include <gtest/gtest.h>
 
+#include <gmock/gmock.h>
+
+using testing::Eq;
+
 namespace {
 
 TEST (SpscRingBufferTest, EmptyOnConstruction) {
@@ -53,7 +57,7 @@ TEST (SpscRingBufferTest, FullRejectsPush) {
 TEST (SpscRingBufferTest, EmptyPopReturnsNullopt) {
   utils::spsc_ring_buffer<int, 8> buf;
 
-  EXPECT_FALSE (buf.try_pop ().has_value ());
+  EXPECT_THAT (buf.try_pop (), Eq (std::nullopt));
 }
 
 TEST (SpscRingBufferTest, WrapAround) {
