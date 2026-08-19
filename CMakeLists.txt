@@ -13,13 +13,14 @@ option(CPP_UTILS_BUILD_TESTS "Build and register tests" ON)
 add_library(cpp_utils INTERFACE)
 add_library(Utils::cpp_utils ALIAS cpp_utils)
 
-target_include_directories(cpp_utils
-  INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
+target_include_directories(
+    cpp_utils
+    INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
 )
 
 if(CPP_UTILS_BUILD_TESTS)
-  enable_testing()
-  add_subdirectory(tests)
+    enable_testing()
+    add_subdirectory(tests)
 endif()

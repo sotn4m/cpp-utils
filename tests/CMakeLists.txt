@@ -22,6 +22,7 @@ add_executable(
     cooldown_tracker_test.cpp
     line_buffer_test.cpp
     quicksort_test.cpp
+    lru_cache_test.cpp
 )
 
 target_compile_features(cpp_utils_tests PRIVATE cxx_std_23)
